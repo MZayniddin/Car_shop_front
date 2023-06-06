@@ -1,8 +1,16 @@
 import { Box } from "@mui/material";
 import NavBar from "../components/NavBar";
 import { Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { fetchCars } from "../actions/cars";
 
 const Admin = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchCars());
+    }, [dispatch]);
+
     return (
         <Box component={"main"}>
             <Box display={"flex"}>
