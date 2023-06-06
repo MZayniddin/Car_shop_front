@@ -14,12 +14,14 @@ import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import decode from "jwt-decode";
 
 const Header = () => {
     const { pathname } = useLocation();
     const isAdminRoute = pathname === "/admin";
+    const [isAdmin, setIsAdmin] = useState(false);
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("profile")) || null
     );
@@ -41,11 +43,27 @@ const Header = () => {
         if (e.target.textContent === "Logout") logout();
     };
 
-    const logout = () => {
+    const logout = useCallback(() => {
         dispatch({ type: "LOGOUT" });
         navigate("/");
         setUser(null);
-    };
+        setIsAdmin(false);
+    }, [dispatch, navigate]);
+
+    useEffect(() => {
+        const token = user?.accessToken;
+        if (token) {
+            try {
+                const decodedToken = decode(token);
+                if (decodedToken.UserInfo.roles.includes(5150))
+                    setIsAdmin(true);
+
+                if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [user, isAdmin, logout]);
 
     return (
         <AppBar color="default">
@@ -56,19 +74,24 @@ const Header = () => {
                     justifyContent: "space-between",
                 }}
             >
-                <Button
-                    to={isAdminRoute ? "/" : "/admin"}
-                    component={Link}
-                    variant="contained"
-                >
-                    {isAdminRoute ? <ArrowBackIcon /> : <PersonIcon />}
-                    <Typography textTransform={"capitalize"} ml={1}>
-                        {isAdminRoute ? "Back to Home" : "Go to Admin"}
-                    </Typography>
-                </Button>
-                <Box>
+                {isAdmin && (
+                    <Button
+                        to={isAdminRoute ? "/" : "/admin"}
+                        component={Link}
+                        variant="contained"
+                    >
+                        {isAdminRoute ? <ArrowBackIcon /> : <PersonIcon />}
+                        <Typography textTransform={"capitalize"} ml={1}>
+                            {isAdminRoute ? "Back to Home" : "Go to Admin"}
+                        </Typography>
+                    </Button>
+                )}
+                <Box ml={"auto"}>
                     {user ? (
-                        <Box>
+                        <Box display={"flex"} alignItems={"center"} gap={3}>
+                            <Typography variant="h6">
+                                {user.result?.username}
+                            </Typography>
                             <Tooltip title="Open settings">
                                 <IconButton
                                     onClick={handleOpenUserMenu}
@@ -76,10 +99,12 @@ const Header = () => {
                                 >
                                     <Avatar
                                         sx={{ background: "dodgerblue" }}
-                                        alt={user.user?.username}
-                                        src={user.user?.image}
+                                        alt={user.result?.username}
+                                        src={user.result?.image}
                                     >
-                                        {user.user?.username.charAt(0)}
+                                        {user.result?.username
+                                            ? user.result?.username.charAt(0)
+                                            : user.result?.email.charAt(0)}
                                     </Avatar>
                                 </IconButton>
                             </Tooltip>
@@ -112,23 +137,6 @@ const Header = () => {
                             </Menu>
                         </Box>
                     ) : (
-                        // <Box display={"flex"} alignItems={"center"} gap={3}>
-                        //     {/* <Button
-                        //         variant="contained"
-                        //         color="error"
-                        //         onClick={logout}
-                        //         >
-                        //         Logout
-                        //     </Button> */}
-                        //     <Typography variant="h6">
-                        //         {user.user?.username}
-                        //     </Typography>
-                        //     <Avatar
-                        //         alt={user.user?.username}
-                        //         src={user.user?.image}
-                        //     >
-                        //     </Avatar>
-                        // </Box>
                         <Button to="/auth" component={Link} variant="contained">
                             Sign in
                         </Button>
