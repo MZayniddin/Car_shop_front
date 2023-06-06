@@ -2,6 +2,8 @@ import { Box, Paper, Typography, Button } from "@mui/material";
 import { useState } from "react";
 import Input from "./Input";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signUp, signIn } from "../actions/auth";
 
 const initialState = {
     username: "",
@@ -16,7 +18,7 @@ const Form = () => {
     const [isSignUp, setIsSignUp] = useState(false);
 
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const handleShowPassword = () => setShowPassword((state) => !state);
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,13 +29,14 @@ const Form = () => {
         setShowPassword(false);
     };
 
-    const handleSubmit = () => {
-        if(isSignUp){
-            
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (isSignUp) {
+            dispatch(signUp(formData, navigate));
+        } else {
+            dispatch(signIn(formData, navigate));
         }
-    }
-
-    console.log(formData);
+    };
 
     return (
         <Paper sx={{ width: "100%", maxWidth: "500px", padding: "25px" }}>
