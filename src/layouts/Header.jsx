@@ -17,10 +17,11 @@ import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import decode from "jwt-decode";
+import { updateUser } from "../actions/auth";
 
 const Header = () => {
     const { pathname } = useLocation();
-    const isAdminRoute = pathname === "/admin";
+    const isAdminRoute = pathname.includes("/admin");
     const [isAdmin, setIsAdmin] = useState(false);
     const [user, setUser] = useState(
         JSON.parse(localStorage.getItem("profile")) || null
@@ -28,7 +29,6 @@ const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const settings = ["Profile", "Image", "Logout"];
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -50,6 +50,12 @@ const Header = () => {
         setIsAdmin(false);
     }, [dispatch, navigate]);
 
+    const handleImage = (e) => {
+        const formData = new FormData();
+        formData.append("image", e.target.files[0]);
+        dispatch(updateUser(formData, user?.result?._id));
+    };
+
     useEffect(() => {
         const token = user?.accessToken;
         if (token) {
@@ -66,7 +72,7 @@ const Header = () => {
     }, [user, isAdmin, logout]);
 
     return (
-        <AppBar color="default">
+        <AppBar  color="default">
             <Container
                 sx={{
                     padding: "10px 0",
@@ -76,7 +82,7 @@ const Header = () => {
             >
                 {isAdmin && (
                     <Button
-                        to={isAdminRoute ? "/" : "/admin"}
+                        to={isAdminRoute ? "/" : "/admin/dashboard"}
                         component={Link}
                         variant="contained"
                     >
@@ -124,16 +130,27 @@ const Header = () => {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                {settings.map((setting) => (
-                                    <MenuItem
-                                        key={setting}
-                                        onClick={handleUserMenu}
+                                <MenuItem onClick={handleUserMenu}>
+                                    <Typography
+                                        component={"label"}
+                                        htmlFor="input-file"
+                                        textAlign="center"
                                     >
-                                        <Typography textAlign="center">
-                                            {setting}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
+                                        Image
+                                    </Typography>
+                                    <input
+                                        onChange={handleImage}
+                                        accept="image/png, image/jpg, image/jpeg"
+                                        style={{ display: "none" }}
+                                        id="input-file"
+                                        type="file"
+                                    />
+                                </MenuItem>
+                                <MenuItem onClick={logout}>
+                                    <Typography textAlign="center">
+                                        Logout
+                                    </Typography>
+                                </MenuItem>
                             </Menu>
                         </Box>
                     ) : (

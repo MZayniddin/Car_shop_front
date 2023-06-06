@@ -24,3 +24,12 @@ export const signIn = (formData, navigate) => async (dispatch) => {
         console.log(error);
     }
 };
+
+export const updateUser = (formData, user) => async (dispatch) => {
+    try {
+        const {data} = await api.updateUser(formData, user)
+        console.log(data)
+    } catch (error) {
+        console.log(error);
+    }
+};
