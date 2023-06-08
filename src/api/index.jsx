@@ -12,6 +12,9 @@ API.interceptors.request.use((req) => {
 });
 
 export const getCars = () => API.get("/car");
+export const postCar = (formData) => API.post("/car", formData);
+
+export const getBrands = () => API.get("/brand");
 
 export const signUp = (formData) => API.post("/user/register", formData);
 export const signIn = (formData) => API.post("/user/login", formData);

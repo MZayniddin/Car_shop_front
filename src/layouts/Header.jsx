@@ -130,7 +130,7 @@ const Header = () => {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                <MenuItem onClick={handleUserMenu}>
+                                {/* <MenuItem onClick={handleUserMenu}>
                                     <Typography
                                         component={"label"}
                                         htmlFor="input-file"
@@ -145,7 +145,7 @@ const Header = () => {
                                         id="input-file"
                                         type="file"
                                     />
-                                </MenuItem>
+                                </MenuItem> */}
                                 <MenuItem onClick={logout}>
                                     <Typography textAlign="center">
                                         Logout

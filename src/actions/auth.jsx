@@ -27,8 +27,8 @@ export const signIn = (formData, navigate) => async (dispatch) => {
 
 export const updateUser = (formData, user) => async (dispatch) => {
     try {
-        const {data} = await api.updateUser(formData, user)
-        console.log(data)
+        const { data } = await api.updateUser(formData, user);
+        console.log(data);
     } catch (error) {
         console.log(error);
     }

@@ -1,4 +1,4 @@
-import { Box, Paper, Typography, Button } from "@mui/material";
+import { Box, Paper, Typography, Button, Modal } from "@mui/material";
 import { useState } from "react";
 import Input from "./Input";
 import { useNavigate } from "react-router-dom";

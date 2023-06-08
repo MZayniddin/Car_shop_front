@@ -7,7 +7,7 @@ import Dashboard from "../pages/Dashboard";
 import AdminCars from "../pages/AdminCars";
 import AdminUsers from "../pages/AdminUsers";
 
-const roles = JSON.parse(localStorage.getItem("profile"))?.result.roles;
+const roles = JSON.parse(localStorage.getItem("profile"))?.result?.roles;
 
 const router = createBrowserRouter([
     {
